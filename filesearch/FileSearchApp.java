@@ -3,6 +3,7 @@ package com.example.filesearch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -39,12 +40,12 @@ public class FileSearchApp {
 	
 	public void walkDirectory(String path) {
 		System.out.println("walkDirectory: " + path);
-		searchFile(null);
-		addFileToZip(null);
+		//searchFile(null);
+		//addFileToZip(null);
 	}
 	
-	public void searchFile(File file) {
-		System.out.println("searchFile: " + file);
+	public boolean searchFile(File file) throws IOException {
+		return searchFileJava8(file);
 	}
 	
 	public void addFileToZip(File file) {
@@ -113,7 +114,15 @@ public class FileSearchApp {
 	
 	
 	public void processFile(File file) {
-		System.out.println("processFile: " + file);
+		try {
+			if (searchFile(file)) {
+				addFileToZip(file);
+			}
+		} catch (IOException|UncheckedIOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error processing file: " + 
+					file + ": " + e);
+		}
 	}
 	
 	
