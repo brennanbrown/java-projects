@@ -200,6 +200,9 @@ public class DatabaseTest {
 		closeDatabaseConnection(conn);
 	}
 	
+	
+	
+	
 	public SecretKey generateNewKey() throws GeneralSecurityException {
 		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 		keyGenerator.init(128);		// options are 128, 192, 256
@@ -258,6 +261,8 @@ public class DatabaseTest {
 		
 		return secretKey;
 	}
+	
+	
 	
 	
 	private String encryptString(String plainText, SecretKey secretKey) 
