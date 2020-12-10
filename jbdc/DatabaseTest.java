@@ -23,6 +23,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -42,15 +45,34 @@ public class DatabaseTest {
 	private Properties globalProps;
 	
 	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		DatabaseTest test = new DatabaseTest();
+		Logger logger = Logger.getLogger("com.example.test");
+		
+		FileHandler handler = null;
 		try {
+			handler = new FileHandler("mylog.xml");
+			logger.addHandler(handler);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error creating log file", e);
+		}
+		
+		try {
+			logger.log(Level.INFO, "About to test the connection");
 			test.testConnection();
+			logger.log(Level.INFO, "Finished testing the connection");
 		} catch (IOException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Error testing connection", e);
 		}
 	}
+	
+	
+	
+	
 	
 	
 	public void writeProperties() throws IOException {
