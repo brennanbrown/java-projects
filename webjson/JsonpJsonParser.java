@@ -19,14 +19,83 @@ import javax.json.JsonValue;
 
 public class JsonpJsonParser {
 
+	public static void main(String[] args) {
+		JsonpJsonParser parser = new JsonpJsonParser();
+		try (FileInputStream in = new FileInputStream("JSON Example.js")) {
+			List<QueryResultBean> results = parser.parseJson(in);
+			for (QueryResultBean result : results) {
+				System.out.println(result.getTitle());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
-	public Object parseJson(InputStream in) {
+	
+	public List<QueryResultBean> parseJson(InputStream in) {
 		JsonReader reader = Json.createReader(in);
 		JsonObject json = reader.readObject();
 		reader.close();
 		
 		// parse the json object, return something
-		return json;
+		List<QueryResultBean> results = new ArrayList<QueryResultBean>();
+		JsonArray items = json.getJsonArray("items");
+		for (JsonValue item : items) {
+			if (item instanceof JsonObject) {
+				QueryResultBean result = createBean((JsonObject)item);
+				results.add(result);
+			}
+		}
+		return results;
 	}
 	
+	
+	public QueryResultBean createBean(JsonObject json) {
+		QueryResultBean bean = new QueryResultBean();
+		
+		// you could also change tags to a List
+		JsonArray array = json.getJsonArray("tags");
+		String[] tags = new String[array.size()];
+		for (int i = 0; i < tags.length; i++) {
+			tags[i] = array.getString(i);
+		}
+		bean.setTags(tags);
+		
+		bean.setIs_answered( json.getBoolean("is_answered", false) );
+		bean.setView_count( json.getInt("view_count", 0) );
+		bean.setAccepted_answer_id( json.getInt("accepted_answer_id", 0) );
+		bean.setAnswer_count( json.getInt("answer_count", 0) );
+		bean.setScore( json.getInt("score", 0) );
+		
+		// you could also convert these long values to dates
+		bean.setLast_activity_date( getLong(json, "last_activity_date", 0) );
+		bean.setCreation_date( getLong(json, "creation_date", 0) );
+		bean.setLast_edit_date( getLong(json, "last_edit_date", 0) );
+		
+		bean.setQuestion_id( json.getJsonNumber("question_id").longValue() );
+		bean.setLink( json.getString("link", null) );
+		bean.setTitle( json.getString("title", null) );
+		
+		OwnerData owner = new OwnerData();
+		JsonObject ownerJson = json.getJsonObject("owner");
+		owner.setReputation( ownerJson.getInt("reputation", 0) );
+		owner.setUser_id( ownerJson.getInt("user_id", 0) );
+		owner.setUser_type( ownerJson.getString("user_type", null) );
+		owner.setAccept_rate( ownerJson.getInt("accept_rate", 0) );
+		owner.setProfile_image( ownerJson.getString("profile_image", null) );
+		owner.setDisplay_name( ownerJson.getString("display_name", null) );
+		owner.setLink( ownerJson.getString("link", null) );
+		
+		bean.setOwner(owner);
+		
+		return bean;
+	}
+	
+	
+	private long getLong(JsonObject json, String key, long defaultValue) {
+		JsonNumber num = json.getJsonNumber(key);
+		return (num == null) ? defaultValue : num.longValue();
+	}
+	
+
 }

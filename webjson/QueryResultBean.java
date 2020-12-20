@@ -1,143 +1,101 @@
 package com.example.webjson;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
-
-public class StackQuery {
-	private static final String BASE_URL = "https://api.stackexchange.com/2.2/search?";
-	private static final String PARAM_SITE = "site=";
-	private static final String PARAM_PAGE_SIZE = "&pagesize=";
-	private static final String PARAM_ORDER = "&order=";
-	private static final String PARAM_SORT = "&sort";
-	private static final String PARAM_TAG = "&tagged=";
-	private static final String PARAM_FILTER = "&filter=";
-	private static final String PARAM_SEARCH_TERM = "&intitle=";
+public class QueryResultBean {
+	private String[] tags;
 	
-	private String site = "stackoverflow";
-	private int pageSize = 5;
-	private SortOrder sortOrder = SortOrder.ASCENDING;
-	private SortBy sortBy = SortBy.RELEVANCE;
-	private String tag = "java";
-	private String searchTerm = "";
 	
-	public enum SortOrder {
-		ASCENDING   ("asc"), 
-		DESCENDING  ("desc");
-		
-		private final String key;
-		SortOrder(String key) { this.key = key; }
-		
-		public String toString() { return key; }
+	private OwnerData owner;
+	private boolean is_answered;
+	private int view_count;
+	private int accepted_answer_id;
+	private int answer_count;
+	private int score;
+	private long last_activity_date;
+	private long creation_date;
+	private long last_edit_date;
+	private long question_id;
+	private String link;
+	private String title;
+	
+	
+	public String[] getTags() {
+		return tags;
+	}
+	public void setTags(String[] tags) {
+		this.tags = tags;
+	}
+	public OwnerData getOwner() {
+		return owner;
+	}
+	public void setOwner(OwnerData owner) {
+		this.owner = owner;
+	}
+	public boolean isIs_answered() {
+		return is_answered;
+	}
+	public void setIs_answered(boolean is_answered) {
+		this.is_answered = is_answered;
+	}
+	public int getView_count() {
+		return view_count;
+	}
+	public void setView_count(int view_count) {
+		this.view_count = view_count;
+	}
+	public int getAccepted_answer_id() {
+		return accepted_answer_id;
+	}
+	public void setAccepted_answer_id(int accepted_answer_id) {
+		this.accepted_answer_id = accepted_answer_id;
+	}
+	public int getAnswer_count() {
+		return answer_count;
+	}
+	public void setAnswer_count(int answer_count) {
+		this.answer_count = answer_count;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
+	public long getLast_activity_date() {
+		return last_activity_date;
+	}
+	public void setLast_activity_date(long last_activity_date) {
+		this.last_activity_date = last_activity_date;
+	}
+	public long getCreation_date() {
+		return creation_date;
+	}
+	public void setCreation_date(long creation_date) {
+		this.creation_date = creation_date;
+	}
+	public long getLast_edit_date() {
+		return last_edit_date;
+	}
+	public void setLast_edit_date(long last_edit_date) {
+		this.last_edit_date = last_edit_date;
+	}
+	public long getQuestion_id() {
+		return question_id;
+	}
+	public void setQuestion_id(long question_id) {
+		this.question_id = question_id;
+	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	
-	public enum SortBy {
-		RELEVANCE	("relevance"), 
-		VOTES		("votes"), 
-		CREATION	("creation"), 
-		ACTIVITY	("activity");
-		
-		private final String key;
-		SortBy(String key) { this.key = key; }
-		
-		public String toString() { return key; }
-	}
-	
-	
-	
-	public String execute() throws IOException {
-		// create a URL
-		URL url = buildUrl();
-		
-		// connect to a server
-		URLConnection connection = url.openConnection();
-		InputStream in = connection.getInputStream();
-		if ("gzip".equals(connection.getContentEncoding())) {
-			in = new GZIPInputStream(in);
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		try ( BufferedReader reader = new BufferedReader(
-				new InputStreamReader(in, StandardCharsets.UTF_8)) ) {
-			char[] buffer = new char[2048];
-			int size = 0;
-			while ((size = reader.read(buffer)) > 0) {
-				sb.append(buffer, 0, size);
-			}
-		}
-		
-		// get information back
-		// return data
-		return sb.toString();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public URL buildUrl() throws MalformedURLException {
-		StringBuilder urlString = new StringBuilder();
-		urlString.append(BASE_URL);
-		urlString.append(PARAM_SITE).append(this.site);
-		urlString.append(PARAM_PAGE_SIZE).append(this.pageSize);
-		urlString.append(PARAM_ORDER).append(this.sortOrder);
-		urlString.append(PARAM_SORT).append(this.sortBy);
-		urlString.append(PARAM_TAG).append(this.tag);
-		urlString.append(PARAM_SEARCH_TERM).append(this.searchTerm);
-		
-		URL url = new URL(urlString.toString());
-		return url;
-	}
-	
-	
-	
-	
-	
-
-	
-	public void setSite(String site) {
-		this.site = site;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public void setSortOrder(SortOrder sortOrder) {
-		this.sortOrder = sortOrder;
-	}
-
-	public void setSortBy(SortBy sortBy) {
-		this.sortBy = sortBy;
-	}
-
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-
-	public void setSearchTerm(String searchTerm) {
-		this.searchTerm = searchTerm;
-	}
-
-		
 }

@@ -2,12 +2,15 @@ package com.example.webjson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
 public class StackQuery {
 	private static final String BASE_URL = "https://api.stackexchange.com/2.2/search?";
@@ -50,6 +53,32 @@ public class StackQuery {
 	}
 	
 	
+	
+	public String execute() throws IOException {
+		// create a URL
+		URL url = buildUrl();
+		
+		// connect to a server
+		URLConnection connection = url.openConnection();
+		InputStream in = connection.getInputStream();
+		if ("gzip".equals(connection.getContentEncoding())) {
+			in = new GZIPInputStream(in);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		try ( BufferedReader reader = new BufferedReader(
+				new InputStreamReader(in, StandardCharsets.UTF_8)) ) {
+			char[] buffer = new char[2048];
+			int size = 0;
+			while ((size = reader.read(buffer)) > 0) {
+				sb.append(buffer, 0, size);
+			}
+		}
+		
+		// get information back
+		// return data
+		return sb.toString();
+	}
 	
 	
 	
@@ -110,4 +139,5 @@ public class StackQuery {
 		this.searchTerm = searchTerm;
 	}
 
+		
 }
