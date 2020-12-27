@@ -17,10 +17,10 @@ import javax.json.JsonReaderFactory;
 import javax.json.JsonValue;
 
 
-public class JsonpJsonParser {
+public class JsonpJsonParser implements IStackJsonParser {
 
 	public static void main(String[] args) {
-		JsonpJsonParser parser = new JsonpJsonParser();
+		IStackJsonParser parser = new JsonpJsonParser();
 		try (FileInputStream in = new FileInputStream("JSON Example.js")) {
 			List<QueryResultBean> results = parser.parseJson(in);
 			for (QueryResultBean result : results) {
@@ -32,6 +32,10 @@ public class JsonpJsonParser {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see com.example.webjson.IStackJsonParser#parseJson(java.io.InputStream)
+	 */
+	@Override
 	public List<QueryResultBean> parseJson(InputStream in) {
 		JsonReader reader = Json.createReader(in);
 		JsonObject json = reader.readObject();

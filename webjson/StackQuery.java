@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class StackQuery {
@@ -54,7 +55,7 @@ public class StackQuery {
 	
 	
 	
-	public String execute() throws IOException {
+	public List<QueryResultBean> execute() throws IOException {
 		// create a URL
 		URL url = buildUrl();
 		
@@ -65,19 +66,14 @@ public class StackQuery {
 			in = new GZIPInputStream(in);
 		}
 		
-		StringBuilder sb = new StringBuilder();
-		try ( BufferedReader reader = new BufferedReader(
-				new InputStreamReader(in, StandardCharsets.UTF_8)) ) {
-			char[] buffer = new char[2048];
-			int size = 0;
-			while ((size = reader.read(buffer)) > 0) {
-				sb.append(buffer, 0, size);
-			}
-		}
+		List<QueryResultBean> result;
+		IStackJsonParser parser = new JacksonJsonParser();
+		result = parser.parseJson(in);
+		in.close();
 		
 		// get information back
 		// return data
-		return sb.toString();
+		return result;
 	}
 	
 	
