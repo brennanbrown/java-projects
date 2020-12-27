@@ -102,6 +102,15 @@ public class StackQuery {
 		urlString.append(PARAM_SEARCH_TERM).append(this.searchTerm);
 		
 		URL url = new URL(urlString.toString());
+		
+		try {
+			URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), 
+					url.getQuery(), null);
+			url = uri.toURL();
+		} catch (URISyntaxException e) {
+			throw new MalformedURLException(e.getMessage());
+		}
+		
 		return url;
 	}
 	
