@@ -1,6 +1,6 @@
-package com.example.webjson;
+package com.example.webjson.data;
 
-public class QueryResultBean {
+public class ResultData {
 	private String[] tags;
 	
 	

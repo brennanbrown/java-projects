@@ -1,4 +1,4 @@
-package com.example.webjson;
+package com.example.webjson.data;
 
 public class OwnerData {
 	private int reputation;
@@ -67,4 +67,5 @@ public class OwnerData {
 	public void setLink(String link) {
 		this.link = link;
 	}
+
 }

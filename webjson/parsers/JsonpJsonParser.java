@@ -1,4 +1,4 @@
-package com.example.webjson;
+package com.example.webjson.parsers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,14 +16,17 @@ import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import javax.json.JsonValue;
 
+import com.example.webjson.data.OwnerData;
+import com.example.webjson.data.ResultData;
 
-public class JsonpJsonParser implements IStackJsonParser {
+
+public class JsonpJsonParser implements IJsonParser {
 
 	public static void main(String[] args) {
-		IStackJsonParser parser = new JsonpJsonParser();
+		IJsonParser parser = new JsonpJsonParser();
 		try (FileInputStream in = new FileInputStream("JSON Example.js")) {
-			List<QueryResultBean> results = parser.parseJson(in);
-			for (QueryResultBean result : results) {
+			List<ResultData> results = parser.parseJson(in);
+			for (ResultData result : results) {
 				System.out.println(result.getTitle());
 			}
 		} catch (IOException e) {
@@ -36,17 +39,17 @@ public class JsonpJsonParser implements IStackJsonParser {
 	 * @see com.example.webjson.IStackJsonParser#parseJson(java.io.InputStream)
 	 */
 	@Override
-	public List<QueryResultBean> parseJson(InputStream in) {
+	public List<ResultData> parseJson(InputStream in) {
 		JsonReader reader = Json.createReader(in);
 		JsonObject json = reader.readObject();
 		reader.close();
 		
 		// parse the json object, return something
-		List<QueryResultBean> results = new ArrayList<QueryResultBean>();
+		List<ResultData> results = new ArrayList<ResultData>();
 		JsonArray items = json.getJsonArray("items");
 		for (JsonValue item : items) {
 			if (item instanceof JsonObject) {
-				QueryResultBean result = createBean((JsonObject)item);
+				ResultData result = createBean((JsonObject)item);
 				results.add(result);
 			}
 		}
@@ -54,8 +57,8 @@ public class JsonpJsonParser implements IStackJsonParser {
 	}
 	
 	
-	public QueryResultBean createBean(JsonObject json) {
-		QueryResultBean bean = new QueryResultBean();
+	public ResultData createBean(JsonObject json) {
+		ResultData bean = new ResultData();
 		
 		// you could also change tags to a List
 		JsonArray array = json.getJsonArray("tags");
